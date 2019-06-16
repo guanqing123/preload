@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <title>图片预加载之无序加载</title>
+    <style>
+        html, body {
+            height: 100%;
+        }
+        a {
+            text-decoration: none;
+        }
+        .box{
+            text-align: center; /*图片居中*/
+        }
+        /* 因为a标签是内联标签,无法设置高度 */
+        .btn {
+            display: inline-block;
+            height: 30px;
+            line-height: 30px;
+            border:1px solid #ccc;
+            background-color: #fff;
+            padding: 0 10px;
+            margin-right: 50px;
+            color: #333;
+        }
+        .btn:hover{
+            background-color: #eee;
+        }
+        .loading{
+            /*作为一个加载页,他应该是占满整个可视区域;
+            并且不应该随着我们的滚动条上下滚动而发生变化.
+            所以我们给他一个固定定位。*/
+            position: fixed;
+            top: 0;
+            left: 0;
+            /*如果仅仅这么写是不起作用的,因为我们这里的百分比其实是继承自它的父类,或者是再往上，父类的父类；
+            但是我们应该可以看到，我们并没有在它的父类上设置任何高度。所以我们应该找到 html,body 给他们设置
+            一下高度 height:100%;那么这么一来,我们这里就可以继承到了。*/
+            width: 100%;
+            height: 100%;
+            background-color: #eee;
+            /*百分比在中间显示*/
+            text-align: center;
+            font-size: 30px;
+        }
+        .progress {
+            margin-top: 600px;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <!--img设置宽度之后,height就会根据宽度自动等比缩放-->
+        <img src="http://pic30.nipic.com/20130612/12724384_085414541114_2.jpg" alt="pic" id="img"
+            height="1000"/>
+        <p>
+            <a href="javascript:;" class="btn" data-control="prev">上一页</a>
+            <a href="javascript:;" class="btn" data-control="next">下一页</a>
+        </p>
+    </div>
+
+    <div class="loading">
+        <p class="progress">0%</p>
+    </div>
+
+    <script src="js/jquery-3.4.1.min.js"></script>
+    <script>
+        var imgs = [
+            'http://pic30.nipic.com/20130612/12724384_085414541114_2.jpg',
+            'http://pic68.nipic.com/file/20150528/11109162_115414410000_2.jpg',
+            'http://pic27.nipic.com/20130130/11725973_160026732000_2.jpg',
+            'http://pic21.nipic.com/20120613/9254256_085130546175_2.jpg',
+            'http://pic32.nipic.com/20130815/4884341_170452278124_2.jpg',
+            'http://pic51.nipic.com/file/20141023/19569848_113236160790_2.jpg',
+            'http://pic41.nipic.com/20140429/18614455_222424236143_2.jpg'
+        ];
+        var index = 0,
+            len = imgs.length,
+            count = 0,
+            $progress = $('.progress');
+
+        $.each(imgs, function (i, src) {
+            var imgObj = new Image();
+
+            $(imgObj).on('load error', function () {
+                $progress.html(Math.round((count + 1) / len * 100) + '%');
+
+                if (count >= len - 1){
+                    $('.loading').hide();
+                    document.title = '1/' + len;
+                }
+
+                count++;
+            });
+
+            imgObj.src = src;
+        });
+
+        $('.btn').on('click', function () {
+            if ('prev' === $(this).data('control')) {   // 上一张
+                /*index--;
+                if (index < 0){
+                    index = 0;
+                }*/
+                index = Math.max(0, --index);
+            } else {    // 下一张
+                index = Math.min(len - 1, ++index);
+            }
+            document.title = (index + 1) + '/' + len;
+            $("#img").attr('src', imgs[index]);
+        });
+    </script>
+</body>
+</html>
