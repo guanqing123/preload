@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="qrcode/jquery-1.11.1.js" ></script>
+    <script type="text/javascript" src="qrcode/jquery.qrcode.js" ></script>
+    <script type="text/javascript" src="qrcode/utf.js" ></script>
+</head>
+<body>
+    <div id="qrcode"></div>
+</body>
+<script>
+    $(function () {
+        var a = 'img';
+        $('#qrcode').qrcode({
+            render    : "canvas",
+            text    : "http://www.baidu.com",
+            width : "200",               //二维码的宽度
+            height : "200",              //二维码的高度
+            background : "#ffffff",       //二维码的后景色
+            foreground : "#000000",        //二维码的前景色
+            src: a + '/logo.jpg'             //二维码中间的图片
+        });
+    })
+</script>
+</html>
